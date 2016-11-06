@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+
+	<title>#{bnd['application.header']}</title>
+</h:head>
+<h:body>
+
+	<h:form id="form">
+		<p:growl id="msgs" showDetail="true" />
+
+		<p:dataTable id="customers" var="customer"
+			value="#{viewController.customers}" editable="true"
+			style="margin-bottom:20px">
+			<f:facet name="header">#{bnd['table.customers']}</f:facet>
+
+			<p:ajax event="rowEdit" listener="#{viewController.onRowEdit}"
+				update=":form:msgs :form:cityTable" />
+			<p:ajax event="rowEditCancel"
+				listener="#{viewController.onRowCancel}" update=":form:msgs" />
+			<p:column headerText="#{bnd['header.name']}">
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{customer.name}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{customer.name}" style="width:100%"
+							label="#{bnd['header.name']}" />
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+
+			<p:column headerText="#{bnd['header.city']}">
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{customer.city.name}" />
+					</f:facet>
+					<f:facet name="input">
+						<h:selectOneMenu value="#{viewController.selectedCity}"
+							style="width:100%">
+
+							<f:selectItems value="#{viewController.cities}" var="city"
+								itemLabel="#{city.name}" itemValue="#{city.id}" />
+						</h:selectOneMenu>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+
+			<p:column style="width:32px">
+				<p:commandButton icon="ui-icon-trash"
+					style="width:25px; height:25px" title="#{bnd['row.del.title']}"
+					actionListener="#{viewController.removeCustomerRow(customer)}"
+					update=":form" ajax="true">
+					<p:confirm header="#{bnd['confirm.dialog.title']}"
+						message="#{bnd['confirm.dialog.message']}" icon="ui-icon-alert" />
+				</p:commandButton>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="#{bnd['confirm.dialog.yes']}" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="#{bnd['confirm.dialog.no']}" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			</p:column>
+			<f:facet name="footer">
+				<p:commandButton value="#{bnd['button.add']}"
+					actionListener="#{viewController.addCustomerRow}" update=":form" />
+			</f:facet>
+			<p:column style="width:32px">
+				<p:rowEditor />
+			</p:column>
+		</p:dataTable>
+		<p:dataTable id="cityTable" var="city"
+			value="#{viewController.citiesWithCustomers}" style="width:33%">
+			<f:facet name="header">#{bnd['table.cities']}</f:facet>
+			<p:subTable var="customer" value="#{city.customers}"
+				style="margin:0px">
+				<f:facet name="header">
+					<h:outputText value="#{city.name}" />
+				</f:facet>
+				<p:column>
+					<h:outputText value="#{customer.name}" />
+				</p:column>
+			</p:subTable>
+		</p:dataTable>
+	</h:form>
+</h:body>
+</html>

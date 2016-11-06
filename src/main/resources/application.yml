@@ -1,0 +1,12 @@
+server:
+  port: 8080
+
+db:
+  driver:
+    name: com.mysql.jdbc.Driver
+  username: root 
+  password: root
+  url: jdbc:mysql://127.0.0.1:3306/test
+  hbm2ddl: create-drop
+  dialect: org.hibernate.dialect.MySQLDialect
+    
